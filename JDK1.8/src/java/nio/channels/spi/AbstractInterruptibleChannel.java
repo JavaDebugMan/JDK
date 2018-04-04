@@ -34,17 +34,18 @@ import java.lang.reflect.InvocationTargetException;
 import java.nio.channels.*;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+
 import sun.nio.ch.Interruptible;
 
 
 /**
  * Base implementation class for interruptible channels.
  *
- * <p> This class encapsulates the low-level machinery required to implement
- * the asynchronous closing and interruption of channels.  A concrete channel
+ * <p> This class encapsulates(压缩,形成胶囊) the low-level machinery required to implement
+ * the asynchronous closing and interruption of channels.  A concrete(具体的) channel
  * class must invoke the {@link #begin begin} and {@link #end end} methods
- * before and after, respectively, invoking an I/O operation that might block
- * indefinitely.  In order to ensure that the {@link #end end} method is always
+ * before and after, respectively(分别的,各自的), invoking an I/O operation that might block
+ * indefinitely(不确定的).  In order to ensure that the {@link #end end} method is always
  * invoked, these methods should be used within a
  * <tt>try</tt>&nbsp;...&nbsp;<tt>finally</tt> block:
  *
@@ -78,15 +79,13 @@ import sun.nio.ch.Interruptible;
  * #implCloseChannel implCloseChannel} method need not synchronize against
  * other threads that might be attempting to close the channel.  </p>
  *
- *
  * @author Mark Reinhold
  * @author JSR-51 Expert Group
  * @since 1.4
  */
 
 public abstract class AbstractInterruptibleChannel
-    implements Channel, InterruptibleChannel
-{
+        implements Channel, InterruptibleChannel {
 
     private final Object closeLock = new Object();
     private volatile boolean open = true;
@@ -94,7 +93,8 @@ public abstract class AbstractInterruptibleChannel
     /**
      * Initializes a new instance of this class.
      */
-    protected AbstractInterruptibleChannel() { }
+    protected AbstractInterruptibleChannel() {
+    }
 
     /**
      * Closes this channel.
@@ -104,8 +104,7 @@ public abstract class AbstractInterruptibleChannel
      * the {@link #implCloseChannel implCloseChannel} method in order to
      * complete the close operation.  </p>
      *
-     * @throws  IOException
-     *          If an I/O error occurs
+     * @throws IOException If an I/O error occurs
      */
     public final void close() throws IOException {
         synchronized (closeLock) {
@@ -129,8 +128,7 @@ public abstract class AbstractInterruptibleChannel
      * immediately, either by throwing an exception or by returning normally.
      * </p>
      *
-     * @throws  IOException
-     *          If an I/O error occurs while closing the channel
+     * @throws IOException If an I/O error occurs while closing the channel
      */
     protected abstract void implCloseChannel() throws IOException;
 
@@ -155,17 +153,19 @@ public abstract class AbstractInterruptibleChannel
     protected final void begin() {
         if (interruptor == null) {
             interruptor = new Interruptible() {
-                    public void interrupt(Thread target) {
-                        synchronized (closeLock) {
-                            if (!open)
-                                return;
-                            open = false;
-                            interrupted = target;
-                            try {
-                                AbstractInterruptibleChannel.this.implCloseChannel();
-                            } catch (IOException x) { }
+                public void interrupt(Thread target) {
+                    synchronized (closeLock) {
+                        if (!open)
+                            return;
+                        open = false;
+                        interrupted = target;
+                        try {
+                            AbstractInterruptibleChannel.this.implCloseChannel();
+                        } catch (IOException x) {
                         }
-                    }};
+                    }
+                }
+            };
         }
         blockedOn(interruptor);
         Thread me = Thread.currentThread();
@@ -181,20 +181,14 @@ public abstract class AbstractInterruptibleChannel
      * as shown <a href="#be">above</a>, in order to implement asynchronous
      * closing and interruption for this channel.  </p>
      *
-     * @param  completed
-     *         <tt>true</tt> if, and only if, the I/O operation completed
-     *         successfully, that is, had some effect that would be visible to
-     *         the operation's invoker
-     *
-     * @throws  AsynchronousCloseException
-     *          If the channel was asynchronously closed
-     *
-     * @throws  ClosedByInterruptException
-     *          If the thread blocked in the I/O operation was interrupted
+     * @param completed <tt>true</tt> if, and only if, the I/O operation completed
+     *                  successfully, that is, had some effect that would be visible to
+     *                  the operation's invoker
+     * @throws AsynchronousCloseException If the channel was asynchronously closed
+     * @throws ClosedByInterruptException If the thread blocked in the I/O operation was interrupted
      */
     protected final void end(boolean completed)
-        throws AsynchronousCloseException
-    {
+            throws AsynchronousCloseException {
         blockedOn(null);
         Thread interrupted = this.interrupted;
         if (interrupted != null && interrupted == Thread.currentThread()) {
@@ -209,6 +203,6 @@ public abstract class AbstractInterruptibleChannel
     // -- sun.misc.SharedSecrets --
     static void blockedOn(Interruptible intr) {         // package-private
         sun.misc.SharedSecrets.getJavaLangAccess().blockedOn(Thread.currentThread(),
-                                                             intr);
+                intr);
     }
 }

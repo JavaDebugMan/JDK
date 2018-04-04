@@ -30,7 +30,7 @@ import java.io.Closeable;
 
 
 /**
- * A nexus for I/O operations.
+ * A nexus(关系,连接) for I/O operations.
  *
  * <p> A channel represents an open connection to an entity such as a hardware
  * device, a file, a network socket, or a program component that is capable of
@@ -46,7 +46,6 @@ import java.io.Closeable;
  * <p> Channels are, in general, intended to be safe for multithreaded access
  * as described in the specifications of the interfaces and classes that extend
  * and implement this interface.
- *
  *
  * @author Mark Reinhold
  * @author JSR-51 Expert Group
@@ -77,7 +76,7 @@ public interface Channel extends Closeable {
      * the first invocation is complete, after which it will return without
      * effect. </p>
      *
-     * @throws  IOException  If an I/O error occurs
+     * @throws IOException If an I/O error occurs
      */
     public void close() throws IOException;
 
