@@ -260,6 +260,7 @@ public class Thread implements Runnable {
 
     /**
      * Returns a reference to the currently executing thread object.
+     * 返回当前执行的线程的引用
      *
      * @return the currently executing thread.
      */
@@ -270,9 +271,9 @@ public class Thread implements Runnable {
      * its current use of a processor. The scheduler is free to ignore this
      * hint.
      *
-     * <p> Yield is a heuristic attempt to improve relative progression
+     * <p> Yield is a heuristic(启发式的,探索) attempt to improve relative progression
      * between threads that would otherwise over-utilise a CPU. Its use
-     * should be combined with detailed profiling and benchmarking to
+     * should be combined with detailed profiling and benchmarking(标记) to
      * ensure that it actually has the desired effect.
      *
      * <p> It is rarely appropriate to use this method. It may be useful
@@ -298,7 +299,7 @@ public class Thread implements Runnable {
     public static native void sleep(long millis) throws InterruptedException;
 
     /**
-     * Causes the currently executing thread to sleep (temporarily cease
+     * Causes the currently executing thread to sleep (temporarily cease(终止)
      * execution) for the specified number of milliseconds plus the specified
      * number of nanoseconds, subject to the precision and accuracy of system
      * timers and schedulers. The thread does not lose ownership of any
@@ -1165,7 +1166,7 @@ public class Thread implements Runnable {
      * die. A timeout of {@code 0} means to wait forever.
      *
      * <p> This implementation uses a loop of {@code this.wait} calls
-     * conditioned on {@code this.isAlive}. As a thread terminates the
+     * conditioned on {@code this.isAlive}. As a thread terminates(使结束) the
      * {@code this.notifyAll} method is invoked. It is recommended that
      * applications not use {@code wait}, {@code notify}, or
      * {@code notifyAll} on {@code Thread} instances.
