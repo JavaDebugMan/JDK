@@ -34,6 +34,7 @@
  */
 
 package java.util.concurrent.locks;
+
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -77,7 +78,7 @@ import java.util.concurrent.TimeUnit;
  * methods and statements. In most cases, the following idiom
  * should be used:
  *
- *  <pre> {@code
+ * <pre> {@code
  * Lock l = ...;
  * l.lock();
  * try {
@@ -85,7 +86,7 @@ import java.util.concurrent.TimeUnit;
  * } finally {
  *   l.unlock();
  * }}</pre>
- *
+ * <p>
  * When locking and unlocking occur in different scopes, care must be
  * taken to ensure that all code that is executed while the lock is
  * held is protected by try-finally or try-catch to ensure that the
@@ -129,7 +130,7 @@ import java.util.concurrent.TimeUnit;
  * <li>A successful {@code unlock} operation has the same
  * memory synchronization effects as a successful <em>Unlock</em> action.
  * </ul>
- *
+ * <p>
  * Unsuccessful locking and unlocking operations, and reentrant
  * locking/unlocking operations, do not require any memory
  * synchronization effects.
@@ -157,16 +158,18 @@ import java.util.concurrent.TimeUnit;
  * shown that the interrupt occurred after another action may have unblocked
  * the thread. An implementation should document this behavior.
  *
+ * @author Doug Lea
  * @see ReentrantLock
  * @see Condition
  * @see ReadWriteLock
- *
  * @since 1.5
- * @author Doug Lea
  */
 public interface Lock {
 
     /**
+     * 获取锁,调用该方法当前线程尝试获取锁,
+     * 如果这一时刻锁没有被其他线程获取到,则成功获取并持有锁
+     * <p>
      * Acquires the lock.
      *
      * <p>If the lock is not available then the current thread becomes
@@ -224,10 +227,13 @@ public interface Lock {
      * cause deadlock, and may throw an (unchecked) exception in such
      * circumstances.  The circumstances and the exception type must
      * be documented by that {@code Lock} implementation.
+     * <p>
+     * 可中断获取锁
+     * 和lock()不同支出在于该方法会响应中断,即在锁的获取中可以中断当前线程
      *
      * @throws InterruptedException if the current thread is
-     *         interrupted while acquiring the lock (and interruption
-     *         of lock acquisition is supported)
+     *                              interrupted while acquiring the lock (and interruption
+     *                              of lock acquisition is supported)
      */
     void lockInterruptibly() throws InterruptedException;
 
@@ -240,7 +246,7 @@ public interface Lock {
      * immediately with the value {@code false}.
      *
      * <p>A typical usage idiom for this method would be:
-     *  <pre> {@code
+     * <pre> {@code
      * Lock lock = ...;
      * if (lock.tryLock()) {
      *   try {
@@ -251,12 +257,14 @@ public interface Lock {
      * } else {
      *   // perform alternative actions
      * }}</pre>
-     *
+     * <p>
      * This usage ensures that the lock is unlocked if it was acquired, and
      * doesn't try to unlock if the lock was not acquired.
+     * <p>
+     * 尝试非阻塞的获取锁,调用该方法后立刻返回,如果能够获取则返回true,否则返回false
      *
      * @return {@code true} if the lock was acquired and
-     *         {@code false} otherwise
+     * {@code false} otherwise
      */
     boolean tryLock();
 
@@ -308,15 +316,19 @@ public interface Lock {
      * deadlock, and may throw an (unchecked) exception in such circumstances.
      * The circumstances and the exception type must be documented by that
      * {@code Lock} implementation.
+     * <p>
+     * 超时时间获取锁,当前线程在一下3中情况会返回:
+     * 1:当前线程在超时时间内获取了锁
+     * 2:当前线程在超时时间内被中断
+     * 3:超时时间结束,返回false
      *
      * @param time the maximum time to wait for the lock
      * @param unit the time unit of the {@code time} argument
      * @return {@code true} if the lock was acquired and {@code false}
-     *         if the waiting time elapsed before the lock was acquired
-     *
+     * if the waiting time elapsed before the lock was acquired
      * @throws InterruptedException if the current thread is interrupted
-     *         while acquiring the lock (and interruption of lock
-     *         acquisition is supported)
+     *                              while acquiring the lock (and interruption of lock
+     *                              acquisition is supported)
      */
     boolean tryLock(long time, TimeUnit unit) throws InterruptedException;
 
@@ -331,6 +343,8 @@ public interface Lock {
      * an (unchecked) exception if the restriction is violated.
      * Any restrictions and the exception
      * type must be documented by that {@code Lock} implementation.
+     * <p>
+     * 释放锁
      */
     void unlock();
 
@@ -348,10 +362,13 @@ public interface Lock {
      * <p>The exact operation of the {@link Condition} instance depends on
      * the {@code Lock} implementation and must be documented by that
      * implementation.
+     * <p>
+     * 获取等待通知组件,改组件和当前的锁绑定,当前线程只有获得了锁,
+     * 才能调用该组件的wait方法,而调用后,当前线程将释放锁
      *
      * @return A new {@link Condition} instance for this {@code Lock} instance
      * @throws UnsupportedOperationException if this {@code Lock}
-     *         implementation does not support conditions
+     *                                       implementation does not support conditions
      */
     Condition newCondition();
 }

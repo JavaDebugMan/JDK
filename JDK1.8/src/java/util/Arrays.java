@@ -323,7 +323,7 @@ public class Arrays {
      * @throws IllegalArgumentException if {@code fromIndex > toIndex}
      * @throws ArrayIndexOutOfBoundsException
      *     if {@code fromIndex < 0} or {@code toIndex > a.length}
-     */
+     */˜
     public static void sort(byte[] a, int fromIndex, int toIndex) {
         rangeCheck(a.length, fromIndex, toIndex);
         DualPivotQuicksort.sort(a, fromIndex, toIndex - 1);
